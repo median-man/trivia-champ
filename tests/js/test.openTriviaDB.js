@@ -1,7 +1,7 @@
-const { test } = QUnit;
+/* global openTriviaDB */
 
-QUnit.module("openTriviaDB");
-test( "openTriviaDB", assert => {
-  assert.ok(openTriviaDB, "exists" );
-  assert.ok(typeof openTriviaDB === 'object', "is an object")
+QUnit.module('openTriviaDB');
+test('openTriviaDB', (assert) => {
+  assert.ok(openTriviaDB, 'exists');
+  assert.ok(typeof openTriviaDB === 'object', 'is an object');
 });
