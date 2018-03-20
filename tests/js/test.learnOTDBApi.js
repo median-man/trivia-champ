@@ -1,19 +1,19 @@
 QUnit.module('Learning OTDB API');
-function getOneArtQuestion() {
+
+function getArtQuestions(count = 1, type = 'any') {
   const artCategory = '25';
-  const questionCount = 1;
-  const url = `https://opentdb.com/api.php?amount=${questionCount}&category=${artCategory}`;
+  let url = `https://opentdb.com/api.php?amount=${count}&category=${artCategory}`;
+  if (type !== 'any') {
+    url += `&type=${type}`;
+  }
   return $.get(url);
 }
 
 test('request for one question from the art category works', (assert) => {
   assert.timeout(3000);
   const testComplete = assert.async();
-  const artCategory = '25';
-  const questionCount = 1;
-  const url = `https://opentdb.com/api.php?amount=${questionCount}&category=${artCategory}`;
   let result;
-  $.get(url)
+  getArtQuestions(1, 'any')
     .done((response) => {
       result = response;
     })
@@ -21,10 +21,11 @@ test('request for one question from the art category works', (assert) => {
       result = false;
     })
     .always(() => {
-      assert.ok(result);
+      assert.ok(result, `reponse: ${JSON.stringify(result, null, 4)}`);
       testComplete();
     });
 });
+
 test('the response from the api for one question from the art category', (assert) => {
   const testComplete = assert.async();
   function testResponse(response) {
@@ -33,7 +34,8 @@ test('the response from the api for one question from the art category', (assert
     assert.ok(Array.isArray(response.results), 'response.results is an array');
     assert.equal(response.results.length, 1, 'results contains one question');
   }
-  getOneArtQuestion()
+
+  getArtQuestions(1, 'any')
     .done(testResponse)
     .fail(() => {
       assert.ok('Response from API', 'Request failed');
@@ -42,6 +44,35 @@ test('the response from the api for one question from the art category', (assert
       testComplete();
     });
 });
-QUnit.todo('a question object', (assert) => {
-  
+
+test('a question object', (assert) => {
+  const testComplete = assert.async();
+  assert.timeout(2000);
+  getArtQuestions(1, 'any')
+    .done(({ results }) => testArtObject(results[0]))
+    .always(testComplete);
+
+  function testArtObject(questionObject) {
+    const sampleQuestion = {
+      category: 'Art',
+      type: 'multiple',
+      difficulty: 'easy',
+      question: 'Who painted the Mona Lisa?',
+      correct_answer: 'Leonardo da Vinci',
+      incorrect_answers: [
+        'Pablo Picasso',
+        'Claude Monet',
+        'Vincent van Gogh',
+      ],
+    };
+    const expectedKeys = Object.keys(sampleQuestion);
+
+    assert.ok(objectHasAllKeysInArray(questionObject, expectedKeys), 'has expected keys');
+  }
+
+  function objectHasAllKeysInArray(obj, keysArray) {
+    return Object
+      .keys(obj)
+      .every(key => keysArray.indexOf(key) !== -1);
+  }
 });

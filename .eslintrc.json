@@ -3,5 +3,8 @@
   "env": {
     "es6": true,
     "jquery": true
+  },
+  "rules": {
+    "no-use-before-define": "off"
   }
 }
