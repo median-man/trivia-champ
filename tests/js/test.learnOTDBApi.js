@@ -1,5 +1,3 @@
-QUnit.module('Learning OTDB API');
-
 function getArtQuestions(count = 1, type = 'any') {
   const artCategory = '25';
   let url = `https://opentdb.com/api.php?amount=${count}&category=${artCategory}`;
@@ -9,6 +7,7 @@ function getArtQuestions(count = 1, type = 'any') {
   return $.get(url);
 }
 
+QUnit.module('Learning OTDB API');
 test('request for one question from the art category works', (assert) => {
   assert.timeout(3000);
   const testComplete = assert.async();
@@ -74,5 +73,43 @@ test('a question object', (assert) => {
     return Object
       .keys(obj)
       .every(key => keysArray.indexOf(key) !== -1);
+  }
+});
+
+test('a multiple choice art question', (assert) => {
+  const testComplete = assert.async();
+  assert.timeout(2000);
+
+  const questionType = 'multiple';
+  getArtQuestions(1, questionType)
+    .done(testMultipleChoideQuestion)
+    .always(testComplete);
+
+  function testMultipleChoideQuestion(response) {
+    const { results: [question] } = response;
+    assert.equal(question.type, questionType, `question.type = ${questionType}`);
+    assert.equal(typeof question.correct_answer, 'string', 'correct_answer property is a string');
+    assert.ok(Array.isArray(question.incorrect_answers), 'incorrect_answers property is an Array');
+  }
+});
+
+test('a true/false art question', (assert) => {
+  assert.timeout(2000);
+  const testComplete = assert.async();
+  const questionType = 'boolean';
+  getArtQuestions(1, questionType)
+    .done(testResult)
+    .always(testComplete);
+
+  function testResult(response) {
+    const { results: [question] } = response;
+    const { correct_answer: answer, incorrect_answers: incorrect } = question;
+    assert.equal(question.type, questionType, `question.type = ${questionType}`);
+    assert.ok(isTrueOrFalseString(answer), 'answer is "True" or "False"');
+    assert.ok(isTrueOrFalseString(incorrect[0]), 'first item in incorrect answers is "True" or "False');
+
+    function isTrueOrFalseString(string) {
+      return string === 'True' || string === 'False';
+    }
   }
 });
