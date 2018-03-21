@@ -220,7 +220,7 @@ test('the response_code is 1 when there aren\'t enough questions', (assert) => {
   }
 });
 
-QUnit.only('request a listing of all categories', (assert) => {
+test('request a listing of all categories', (assert) => {
   assert.timeout(2000);
   const testComplete = assert.async();
 
