@@ -1,14 +1,4 @@
 /* global timer, sinon */
-QUnit.assert.isFunction = function isFunction(func, message = 'is a function') {
-  const result = {
-    result: func instanceof Function,
-    actual: func,
-    expected: typeof (() => {}),
-    message,
-  };
-  this.pushResult(result);
-};
-
 QUnit.module('timer', () => {
   const timerId = 'timer';
   const appendTimerElement = () => $('<div>', { id: timerId }).appendTo('#qunit-fixture');
