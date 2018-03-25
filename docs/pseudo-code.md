@@ -102,14 +102,83 @@ Notes, flow, and pseudo-code for Trivia Champ app.
 **render():**
   ```
   display timeRemaining in rootNode
-  show the timer
   ```
 
 **hide():**
   ```
   hide the timer
   ```
-## Quiz Module
-**init():**
+
+## Question Class
+**constructor(values)**
   ```
+  assign all values to instance
+  ```
+  
+**appendTo(container)**
+  ```
+  create html element
+  set element property
+  render html in container as the last child
+  return this
+  ```
+
+**getResult()**
+  ```
+  get actual answer
+  if no answer {
+    return 'unanswered'
+  }
+  if actual answer = expected answer {
+    return 'correct'
+  }
+  return 'incorrect'
+  ```
+  
+
+## Quiz Module
+**init(selector):**
+  ```
+  set rootElement property
+  if rootElement not set {
+    throw error 'selector not in document. selector: [selector]'    
+  }
+  return module
+  ```
+
+**setQuestions(questions):**
+  ```
+  for each item in questions
+    create a new question object
+    push new question to questions property
+  return module
+  ```
+  
+**render()**
+  ```
+  empty questions container
+  for each question in this.questions {
+    append question to questions container
+  }
+  ```
+**show()**
+  ```
+  make rootElement visible
+  ```
+
+**hide()**
+  ```
+  hide the rootElement
+  ```
+**calculateScore()**
+  ```
+  for each question
+    let result = question.getResult()
+    if result = unanswered
+      increment this.score.unanswered
+    if result = correct
+      increment this.score.correct
+    if result = incorrect
+      increment this.score.incorrect
+  return this
   ```
