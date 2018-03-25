@@ -67,10 +67,10 @@ Notes, flow, and pseudo-code for Trivia Champ app.
   ```
   
 ## Timer Module
-**init(rootNodeSelector, seconds[, settings]):**
+**init(rootElementSelector, seconds[, settings]):**
   ```
   set the rootNode
-  if the rootNode isn't set, throw error "invalid rootNodeSelector: [rootNodeSelector]"
+  if the rootNode isn't set, throw error "invalid rootElementSelector: [rootElementSelector]"
   initialTime = seconds
   if settings defined {
     set properties with settings
@@ -84,12 +84,8 @@ Notes, flow, and pseudo-code for Trivia Champ app.
 
 **start():**
   ```
-  if onTimeOut is not a function {
-    throw error "onTimeOut not set"
-  }
   timeRemaining = initialTime
-  timer.render()
-  setInterval(timer.tick, interval)
+  timer.intervalId = setInterval(timer.tick, interval)
   ```
   
 **tick():**
