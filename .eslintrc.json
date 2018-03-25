@@ -9,6 +9,6 @@
     "no-use-before-define": "off"
   },
   "globals": {
-    "Question": true
+    "makeQuestion": true
   }
 }

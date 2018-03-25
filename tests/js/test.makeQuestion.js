@@ -1,4 +1,4 @@
-QUnit.module('Question', () => {
+QUnit.module('makeQuestion', () => {
   const questionData = {
     category: 'Art',
     type: 'multiple',
@@ -14,15 +14,15 @@ QUnit.module('Question', () => {
 
   const setupNewQuestion = (id) => {
     $('<div>', { id }).appendTo('#qunit-fixture');
-    const question = new Question(questionData);
+    const question = makeQuestion(questionData);
     const parentSelector = `#${id}`;
     return { parentId: id, parentSelector, question };
   };
 
-  test('Question is defined', assert => assert.ok(Question));
+  test('makeQuestion is defined', assert => assert.ok(makeQuestion));
 
-  test('has a data property which is equal to data passed to constructor', (assert) => {
-    const question = new Question(questionData);
+  test('question has a data property which is equal to data passed to makeQuestion', (assert) => {
+    const { question } = setupNewQuestion();
     assert.equal(question.data, questionData, 'sets data property');
   });
 
@@ -43,13 +43,13 @@ QUnit.module('Question', () => {
     test(`when selector parameter is "#${id}"`, (assert) => {
       const { question, parentSelector } = setup;
       question.setParent(parentSelector);
-      assert.ok(question.parent, 'question.parent exists');
-      assert.ok(question.parent instanceof Element, 'question.parent is an Element');
+      assert.ok(question.getParent(), 'getParent does not return undefined');
+      assert.ok(question.getParent() instanceof Element, 'getParent returns an Element');
     });
 
-    test('returns the question', (assert) => {
+    test('is chainable', (assert) => {
       const { question, parentSelector } = setup;
-      assert.equal(question, question.setParent(parentSelector));
+      assert.equal(question, question.setParent(parentSelector), 'returns question instance');
     });
 
     test('throws if selector does not match an element in the DOM', (assert) => {
@@ -73,8 +73,8 @@ QUnit.module('Question', () => {
     test('it exists', assert => assert.ok(question.render));
 
     test('throws if parent is not defined', (assert) => {
-      question.parent = undefined;
-      assert.notOk(question.parent, 'when parent is not set');
+      question = makeQuestion();
+      assert.notOk(question.getParent(), 'when parent is not set');
 
       const errMatcher = /question.render called before setting parent/gi;
       assert.throws(question.render, errMatcher, 'throws with message');
@@ -86,22 +86,24 @@ QUnit.module('Question', () => {
 
     test('sets rootNode property', (assert) => {
       question.render();
-      assert.ok(question.rootNode, 'rootNode property exists');
-      assert.ok(question.rootNode instanceof HTMLElement, 'rootNode is an instance of HTMLElement');
+      const isHTMLElement = question.getRootNode() instanceof HTMLElement;
+      assert.ok(question.getRootNode(), 'getRootNode does not return undefined');
+      assert.ok(isHTMLElement, 'rootNode is an instance of HTMLElement');
     });
 
-    test('append rootNode to parent', (assert) => {
+    test('appends rootNode to parent', (assert) => {
       question.render();
-      const parentHasRootNode = $(question.parent).children()[0] === question.rootNode;
-      assert.equal($(question.parent).children().length, 1, 'parent has only one child');
+      const parent = $(question.getParent());
+      const parentHasRootNode = parent.children()[0] === question.getRootNode();
+      assert.equal(parent.children().length, 1, 'parent has only one child');
       assert.ok(parentHasRootNode, 'rootNode is a child element of parent');
     });
 
     test('renders html at rootNode', (assert) => {
-      const questionText = questionData.question;
       question.render();
-      const html = $(question.rootNode).html();
-      assert.includes(html, question.data.question, 'html includes question text');
+      const questionText = questionData.question;
+      const html = $(question.getRootNode()).html();
+      assert.includes(html, questionText, 'html includes question text');
     });
   }
 });
