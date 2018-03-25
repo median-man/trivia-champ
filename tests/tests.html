@@ -22,6 +22,7 @@
     addCustomAssertions(QUnit.assert);
     function addCustomAssertions(assert) {
       assert.isFunction = assertIsFunction;
+      assert.includes = assertStringIncludes;
     }
     function assertIsFunction(func, message = 'is a function') {
       const result = {
@@ -32,6 +33,15 @@
       };
       this.pushResult(result);
     };
+    function assertStringIncludes(target, search, message) {
+      const result = {
+        result: target.includes(search),
+        actual: target,
+        expected: search,
+        message,
+      }
+      this.pushResult(result);
+    }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sinon.js/5.0.0/sinon.min.js"></script>
   <script src="js/test.openTriviaDB.js"></script>
