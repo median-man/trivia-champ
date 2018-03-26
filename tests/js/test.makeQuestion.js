@@ -1,4 +1,5 @@
-QUnit.module('makeQuestion', () => {
+QUnit.module('makeQuestion', (hooks) => {
+  const parentId = 'test-question';
   const questionData = {
     category: 'Art',
     type: 'multiple',
@@ -11,18 +12,21 @@ QUnit.module('makeQuestion', () => {
       'Vincent van Gogh',
     ],
   };
-
-  const setupNewQuestion = (id) => {
-    $('<div>', { id }).appendTo('#qunit-fixture');
+  let setup;
+  const setupNewQuestion = () => {
+    $('<div>', { id: parentId }).appendTo('#qunit-fixture');
     const question = makeQuestion(questionData);
-    const parentSelector = `#${id}`;
-    return { parentId: id, parentSelector, question };
+    const parentSelector = `#${parentId}`;
+    setup = { id: parentId, parentSelector, question };
+    return setup;
   };
+  hooks.beforeEach(setupNewQuestion);
+
 
   test('makeQuestion is defined', assert => assert.ok(makeQuestion));
 
   test('question has a data property which is equal to data passed to makeQuestion', (assert) => {
-    const { question } = setupNewQuestion();
+    const { question } = setup;
     assert.equal(question.data, questionData, 'sets data property');
   });
 
@@ -30,17 +34,10 @@ QUnit.module('makeQuestion', () => {
   testRender();
 
   function testSetParent() {
-    let setup;
-    const id = 'question-1';
-    const setParentHooks = {
-      beforeEach() {
-        setup = setupNewQuestion(id);
-      },
-    };
-    QUnit.module('question.setParent', setParentHooks);
+    QUnit.module('question.setParent');
     test('setParent exists', assert => assert.ok(setup.question.setParent));
 
-    test(`when selector parameter is "#${id}"`, (assert) => {
+    test(`when selector parameter is "#${parentId}"`, (assert) => {
       const { question, parentSelector } = setup;
       question.setParent(parentSelector);
       assert.ok(question.getParent(), 'getParent does not return undefined');
@@ -61,15 +58,17 @@ QUnit.module('makeQuestion', () => {
   }
 
   function testRender() {
+    QUnit.module('question.render', (renderHooks) => {
     let question;
     let parentSelector;
-    const hooks = {
-      beforeEach() {
-        ({ question, parentSelector } = setupNewQuestion('test-question'));
+      const expectedAnswers = [questionData.correct_answer, ...questionData.incorrect_answers];
+
+
+      renderHooks.beforeEach(() => {
+        ({ question, parentSelector } = setup);
         question.setParent(parentSelector);
-      },
-    };
-    QUnit.module('question.render', hooks);
+      });
+
     test('it exists', assert => assert.ok(question.render));
 
     test('throws if parent is not defined', (assert) => {
