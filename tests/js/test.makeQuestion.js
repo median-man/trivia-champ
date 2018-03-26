@@ -59,8 +59,8 @@ QUnit.module('makeQuestion', (hooks) => {
 
   function testRender() {
     QUnit.module('question.render', (renderHooks) => {
-    let question;
-    let parentSelector;
+      let question;
+      let parentSelector;
       const expectedAnswers = [questionData.correct_answer, ...questionData.incorrect_answers];
 
 
@@ -69,40 +69,134 @@ QUnit.module('makeQuestion', (hooks) => {
         question.setParent(parentSelector);
       });
 
-    test('it exists', assert => assert.ok(question.render));
+      test('it exists', assert => assert.ok(question.render));
 
-    test('throws if parent is not defined', (assert) => {
-      question = makeQuestion();
-      assert.notOk(question.getParent(), 'when parent is not set');
+      test('throws if parent is not defined', (assert) => {
+        question = makeQuestion();
+        assert.notOk(question.getParent(), 'when parent is not set');
 
-      const errMatcher = /question.render called before setting parent/gi;
-      assert.throws(question.render, errMatcher, 'throws with message');
-    });
+        const errMatcher = /question.render called before setting parent/gi;
+        assert.throws(question.render, errMatcher, 'throws with message');
+      });
 
-    test('is chainable', (assert) => {
-      assert.equal(question.render(), question, 'returns question instance');
-    });
+      test('is chainable', (assert) => {
+        assert.equal(question.render(), question, 'returns question instance');
+      });
 
-    test('sets rootNode property', (assert) => {
-      question.render();
-      const isHTMLElement = question.getRootNode() instanceof HTMLElement;
-      assert.ok(question.getRootNode(), 'getRootNode does not return undefined');
-      assert.ok(isHTMLElement, 'rootNode is an instance of HTMLElement');
-    });
+      test('sets rootNode property', (assert) => {
+        question.render();
+        const isHTMLElement = question.getRootNode() instanceof HTMLElement;
+        assert.ok(question.getRootNode(), 'getRootNode does not return undefined');
+        assert.ok(isHTMLElement, 'rootNode is an instance of HTMLElement');
+      });
 
-    test('appends rootNode to parent', (assert) => {
-      question.render();
-      const parent = $(question.getParent());
-      const parentHasRootNode = parent.children()[0] === question.getRootNode();
-      assert.equal(parent.children().length, 1, 'parent has only one child');
-      assert.ok(parentHasRootNode, 'rootNode is a child element of parent');
-    });
+      test('appends rootNode to parent', (assert) => {
+        question.render();
+        const parent = $(question.getParent());
+        const parentHasRootNode = parent.children()[0] === question.getRootNode();
+        assert.equal(parent.children().length, 1, 'parent has only one child');
+        assert.ok(parentHasRootNode, 'rootNode is a child element of parent');
+      });
 
-    test('renders html at rootNode', (assert) => {
-      question.render();
-      const questionText = questionData.question;
-      const html = $(question.getRootNode()).html();
-      assert.includes(html, questionText, 'html includes question text');
+      test('rootNode has one descendent with class "question"', (assert) => {
+        const root = question.render().getRootNode();
+        const questionNode = $(root).find('.question');
+        assert.equal(questionNode.length, 1, 'there is only one descendent');
+      });
+
+      test(`when the question text is "${questionData.question}"`, (assert) => {
+        question.render();
+        const expected = questionData.question;
+        const actual = $('.question').text();
+        assert.equal(actual, expected, '.question element contains the text');
+      });
+
+      QUnit.module('answer-group', (answerGroupHooks) => {
+        let answerGroup;
+        const expectedClass = 'answer-group';
+        const selector = `.${expectedClass}`;
+
+        answerGroupHooks.beforeEach(() => {
+          question.render();
+          answerGroup = $(selector);
+        });
+
+        test(`rootNode has one descendent with class "${expectedClass}"`, (assert) => {
+          assert.equal(answerGroup.length, 1, 'there is only one');
+        });
+
+        test('contains one child element with for each question', (assert) => {
+          const expectedCount = expectedAnswers.length;
+          const actualCount = answerGroup.children().length;
+          assert.equal(actualCount, expectedCount, `should have ${expectedCount} child elements`);
+        });
+      });
+
+      QUnit.module('answer', (answerHooks) => {
+        const expectedClass = 'answer';
+        const selector = `.${expectedClass}`;
+        let answers;
+
+        answerHooks.beforeEach(() => {
+          question.render();
+          answers = $(selector);
+        });
+
+        test(`each answer has "${expectedClass}" class`, (assert) => {
+          assert.ok(answers.each(hasExpectedClass), 'answer.hasClass returns true');
+
+          function hasExpectedClass(index, answer) {
+            return $(answer).hasClass(expectedClass);
+          }
+        });
+
+        test('each answer contains one input element', (assert) => {
+          answers.each(testAnswer);
+          function testAnswer(index, answer) {
+            assert.equal($(answer).find('input').length, 1, 'answer.find("input") = 1');
+          }
+        });
+
+        test('each input', (assert) => {
+          answers.find('input')
+            .toArray()
+            .forEach(testInput);
+
+          function testInput(input, index) {
+            const expectedAttrs = {
+              name: parentId,
+              id: `${parentId}-${index}`,
+              type: 'radio',
+              value: expectedAnswers[index],
+            };
+            assert.attrIncludes(input, expectedAttrs, 'includes expected attributes');
+          }
+        });
+
+        test('each answer contains one label element', (assert) => {
+          answers.each(testAnswer);
+          function testAnswer(index, answer) {
+            assert.equal($(answer).find('label').length, 1, 'only one descendent label element');
+          }
+        });
+
+        test('each label', (assert) => {
+          answers.find('label')
+            .toArray()
+            .forEach(testLabel);
+
+          function testLabel(label, index) {
+            const expectedAttrs = { for: `${parentId}-${index}` };
+            assert.attrIncludes(label, expectedAttrs, 'includes expected attributes');
+
+            assert.equal(
+              $(label).text(),
+              expectedAnswers[index],
+              `label text = ${expectedAnswers[index]}`,
+            );
+          }
+        });
+      });
     });
   }
 });
