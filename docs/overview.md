@@ -26,6 +26,3 @@ count correct, incorrect, and unanswered questions
 show scores
 show play again button
 ```  
-
-## Modules
-### App

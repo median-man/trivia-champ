@@ -1,2 +1,0 @@
-# App Module
-## getQuestionData
