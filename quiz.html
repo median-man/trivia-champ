@@ -7,26 +7,131 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Trivia Champ</title>
   <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel eros
-        facilisis purus vehicula congu</h5>
+
+  <div id="results-modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg text-center" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title w-100">Quiz Results</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-4">
+              <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Correct
+                    <span id="num-correct">7</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Incorrect
+                    <span id="num-incorrect">2</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Unanswered
+                    <span id="num-unanswerd">1</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="play-again" type="button" class="btn btn-primary btn-lg btn-block">Play Again</button>
+        </div>
+      </div>
     </div>
-    <div class="list-group list-group-flush">
-      <button type="button" class="list-group-item list-group-item-action active">
-        Cras justo odio
-      </button>
-      <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
-      <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
-      <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+  </div>
+  </div>
+
+  <div class="container mt-5">
+    <div id="timer" class="alert alert-info position-fixed mt-3 ">
+      <strong>30</strong>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div id="quiz">
+          <div class="card mb-3">
+            <div class="card-header text-white">
+              <h5>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel eros facilisis purus vehicula congu
+              </h5>
+            </div>
+            <div class="list-group list-group-flush">
+              <button type="button" class="list-group-item list-group-item-action active">
+                Cras justo odio
+              </button>
+              <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+              <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+              <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+            </div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-header text-white">
+              <h5>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel eros facilisis purus vehicula congu
+              </h5>
+            </div>
+            <div class="list-group list-group-flush">
+              <button type="button" class="list-group-item list-group-item-action active">
+                Cras justo odio
+              </button>
+              <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+              <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+              <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+            </div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-header text-white">
+              <h5>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel eros facilisis purus vehicula congu
+              </h5>
+            </div>
+            <div class="list-group list-group-flush">
+              <button type="button" class="list-group-item list-group-item-action active">
+                Cras justo odio
+              </button>
+              <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+              <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+              <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+            </div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-header text-white">
+              <h5>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel eros facilisis purus vehicula congu
+              </h5>
+            </div>
+            <div class="list-group list-group-flush">
+              <button type="button" class="list-group-item list-group-item-action active">
+                Cras justo odio
+              </button>
+              <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+              <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+              <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <footer class="mt-auto">
-    <div class="inner">
+  <footer class="mt-auto text-center">
+    <div class="container">
       <p>Created by
         <a href="http://www.john-desrosiers.com/">John Desrosiers</a>
       </p>
@@ -38,11 +143,9 @@
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
     crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
   <script src="assets/js/openTriviaDB.js"></script>
 </body>
