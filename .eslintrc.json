@@ -9,6 +9,7 @@
     "no-use-before-define": "off"
   },
   "globals": {
-    "makeQuestion": true
+    "makeQuestion": true,
+    "questionData": true
   }
 }
