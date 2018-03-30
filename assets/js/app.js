@@ -20,5 +20,20 @@ const view = (() => {
     optionHtml: text =>
       `<button type="button" class="list-group-item list-group-item-action">${text}</button>`,
   };
-  return { questionCard };
+
+  function renderQuiz(questions) {
+    const rootNode = $('#quiz');
+    const questionHtml = questions
+      .map(question => questionCard.getHtml(question.getQuestion(), question.getOptions()))
+      .join('');
+    rootNode.append(questionHtml);
+  }
+  const quiz = { render: renderQuiz };
+
+  return { questionCard, quiz };
 })();
+
+$(() => {
+  const questions = questionData.map(makeQuestion);
+  view.quiz.render(questions);
+});

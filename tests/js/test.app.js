@@ -1,15 +1,6 @@
-/* global questionData, makeQuestion, view, questionCard */
-QUnit.module('Question Data', () => {
-  test('questionData is an array', (assert) => {
-    assert.ok(Array.isArray(questionData), 'Array.isArray(questionData)');
-  });
-  test('questionData has 10 items', (assert) => {
-    assert.equal(questionData.length, 10, 'questionData.length = 10');
-  });
-});
-
-QUnit.module('question model', () => {
-  const openTDBQuestions = [{
+/* global questionData, makeQuestion, view */
+const openTDBQuestions = [
+  {
     category: 'Art',
     type: 'multiple',
     difficulty: 'medium',
@@ -20,7 +11,8 @@ QUnit.module('question model', () => {
       'French',
       'Portuguese',
     ],
-  }, {
+  },
+  {
     category: 'Art',
     type: 'multiple',
     difficulty: 'hard',
@@ -31,7 +23,19 @@ QUnit.module('question model', () => {
       '1523',
       '1511',
     ],
-  }];
+  },
+];
+
+QUnit.module('Question Data', () => {
+  test('questionData is an array', (assert) => {
+    assert.ok(Array.isArray(questionData), 'Array.isArray(questionData)');
+  });
+  test('questionData has 10 items', (assert) => {
+    assert.equal(questionData.length, 10, 'questionData.length = 10');
+  });
+});
+
+QUnit.module('question model', () => {
   test('makeQuestion exists', (assert) => {
     assert.ok(makeQuestion);
   });
@@ -99,16 +103,16 @@ QUnit.module('view', () => {
     test('view.questionCard exists', (assert) => {
       assert.ok(questionCard, 'is defined');
     });
-  
+
     const expectedMethods = ['optionHtml', 'headerHtml', 'getHtml'];
     expectedMethods.forEach(hasMethodTest);
-  
+
     function hasMethodTest(methodName) {
       test(`questionCard has ${methodName} method`, (assert) => {
         assert.isFunction(questionCard[methodName]);
       });
     }
-  
+
     QUnit.module('optionHtml', () => {
       const { optionHtml } = questionCard;
       test('takes a string and returns a button string', (assert) => {
@@ -123,13 +127,13 @@ QUnit.module('view', () => {
         },
         ];
         tests.forEach(testOptionHtml);
-  
+
         function testOptionHtml({ input, expected }) {
           assert.equal(optionHtml(input), expected, `when text is ${input}`);
         }
       });
     });
-  
+
     QUnit.module('headerHtml', () => {
       const { headerHtml } = questionCard;
       test('takes string and returns a card header string', (assert) => {
@@ -141,13 +145,13 @@ QUnit.module('view', () => {
           expected: '<div class="card-header text-white"><h5>Orcrist</h5></div>',
         }];
         tests.forEach(testHeaderHtml);
-  
+
         function testHeaderHtml({ input, expected }) {
           assert.equal(headerHtml(input), expected, `when input is ${input}`);
         }
       });
     });
-  
+
     QUnit.module('getHtml', () => {
       const { getHtml } = questionCard;
       test('accepts a question string and an array of option strings and returns card string', (assert) => {
@@ -203,12 +207,61 @@ QUnit.module('view', () => {
           },
         ];
         tests.forEach(testGetHtml);
-  
+
         function testGetHtml({ input, expected }) {
           const inputStr = JSON.stringify(input, null, 6);
           assert.equal(getHtml(input.questionText, input.options), expected, `input: ${inputStr}`);
         }
       });
+    });
+  });
+
+  QUnit.module('quiz', (hooks) => {
+    const beforeEach = (assert) => {
+      $('#qunit-fixture').append('<div id="quiz"></div>');
+      assert.equal($('div#quiz').length, 1, 'div#quiz element in DOM');
+    };
+    hooks.beforeEach(beforeEach);
+
+    const { quiz } = view;
+    Object.assign(hooks, { beforeEach });
+
+    test('view.quiz exists', (assert) => {
+      assert.ok(view.quiz, 'view.quiz is truthy');
+    });
+
+    test('has render method', assert => assert.isFunction(quiz.render));
+
+    test('no question cards are rendered when empty question array is passed in', (assert) => {
+      quiz.render([]);
+      assert.equal($('#quiz').html(), '', '#quiz is empty');
+    });
+
+    test('renders html for one questionCard when there is one question passed in', (assert) => {
+      const input = [makeQuestion(openTDBQuestions[0])];
+
+      const expectedHtml = '<div id="gandalf">Gandalf the Grey</div>';
+      const stub = sinon.stub(view.questionCard, 'getHtml');
+      stub.returns(expectedHtml);
+
+      quiz.render(input);
+      const quizNode = document.querySelector('#quiz');
+      const gandalf = document.querySelector('div#gandalf');
+      const domContainsExpected = $.contains(quizNode, gandalf);
+      assert.ok(domContainsExpected, '#quiz contains div#gandalf');
+
+      stub.restore();
+    });
+
+    test('renders html for each question passed in', (assert) => {
+      const input = [makeQuestion(openTDBQuestions[0]), makeQuestion(openTDBQuestions[1])];
+      const expectedHtml = input.map(question => [question.getQuestion(), question.getOptions()])
+        .map(params => view.questionCard.getHtml(...params));
+
+      quiz.render(input);
+      const actualHtml = $('#quiz').html();
+      const hasExpectedHtml = expectedHtml.every(html => actualHtml.includes(html));
+      assert.ok(hasExpectedHtml, '#quiz has expected html');
     });
   });
 });
