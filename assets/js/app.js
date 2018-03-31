@@ -30,6 +30,13 @@ const view = (() => {
 
     optionHtml: text =>
       `<button type="button" class="list-group-item list-group-item-action">${text}</button>`,
+
+    selectOption: (event) => {
+      const activeClass = 'active';
+      $(event.target)
+        .addClass(activeClass)
+        .siblings().removeClass(activeClass);
+    },
   };
 
   function renderQuiz(questions) {

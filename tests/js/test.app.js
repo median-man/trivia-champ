@@ -138,7 +138,7 @@ QUnit.module('view', () => {
       assert.ok(questionCard, 'is defined');
     });
 
-    const expectedMethods = ['optionHtml', 'headerHtml', 'getHtml'];
+    const expectedMethods = ['optionHtml', 'headerHtml', 'getHtml', 'selectOption'];
     expectedMethods.forEach(hasMethodTest);
 
     function hasMethodTest(methodName) {
@@ -246,6 +246,45 @@ QUnit.module('view', () => {
           const inputStr = JSON.stringify(input, null, 6);
           assert.equal(getHtml(input.questionText, input.options), expected, `input: ${inputStr}`);
         }
+      });
+    });
+
+    QUnit.module('selectOption', (hooks) => {
+      const { selectOption } = questionCard;
+      const activeClass = 'active';
+      let testFixture;
+
+      hooks.beforeEach((assert) => {
+        testFixture = makeTestFixture();
+        assert.notOk(
+          testFixture.options.hasClass(activeClass),
+          `options should not have "${activeClass}" class`,
+        );
+      });
+      function makeTestFixture() {
+        const optionClass = 'option';
+        $('#qunit-fixture')
+          .append(`<div class="${optionClass}">Gil-galad</div>`)
+          .append(`<div class="${optionClass}">Isildur</div>`);
+
+        const options = $(`.${optionClass}`);
+        options.click(selectOption);
+
+        return { options };
+      }
+
+      test(`accepts a DOM click event object and adds the "${activeClass}" class to it`, (assert) => {
+        const option = testFixture.options.first();
+        option.click();
+        assert.ok(option.hasClass(activeClass), 'option has "active" class after click event');
+      });
+
+      test(`accepts a DOM click event object and removes "${activeClass}" class from other options in set`, (assert) => {
+        const firstOpt = testFixture.options.eq(0);
+        const secondOpt = testFixture.options.eq(1);
+        firstOpt.addClass(activeClass);
+        secondOpt.click();
+        assert.notOk(firstOpt.hasClass('active'), 'option has "active" class after click event');
       });
     });
   });
