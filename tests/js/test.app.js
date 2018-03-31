@@ -35,9 +35,43 @@ QUnit.module('Question Data', () => {
   });
 });
 
-QUnit.module('question model', () => {
+QUnit.module('question model', (hooks) => {
+  let randomStub;
+  hooks.before(() => {
+    const preventOptionShuffle = 0;
+    randomStub = sinon.stub(Math, 'random').returns(preventOptionShuffle);
+  });
+  hooks.afterEach(() => {
+    randomStub.resetBehavior();
+  });
+  hooks.after(() => {
+    randomStub.restore();
+  });
   test('makeQuestion exists', (assert) => {
     assert.ok(makeQuestion);
+  });
+
+  test('makeQuestions shuffles the order of the options', (assert) => {
+    const testData = openTDBQuestions[0];
+    testData.correct_answer = 1;
+    testData.incorrect_answers = [2, 3, 4];
+
+    testShuffle([1, 2, 3, 4], [0, 0, 0]);
+    testShuffle([2, 1, 3, 4], [0.25, 0, 0]);
+    testShuffle([3, 1, 2, 4], [0.5, 0, 0]);
+    testShuffle([1, 3, 2, 4], [0, 0.34, 0]);
+    testShuffle([3, 2, 4, 1], [0.5, 0.34, 0.5]);
+
+    function testShuffle(expected, randoms) {
+      setupStub(randoms);
+      const actual = makeQuestion(testData).getOptions();
+      assert.deepEqual(actual, expected, `when Math.random() returns ${randoms.join(', ')}`);
+    }
+
+    function setupStub(nums) {
+      randomStub.reset();
+      nums.forEach((num, index) => randomStub.onCall(index).returns(num));
+    }
   });
 
   test('has expected methods', (assert) => {
