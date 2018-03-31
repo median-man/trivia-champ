@@ -28,8 +28,12 @@ const view = (() => {
 
     headerHtml: text => `<div class="card-header text-white"><h5>${text}</h5></div>`,
 
-    optionHtml: text =>
-      `<button type="button" class="list-group-item list-group-item-action">${text}</button>`,
+    optionHtml: (text) => {
+      const classes = `list-group-item list-group-item-action ${questionCard.optionClass()}`;
+      return `<button type="button" class="${classes}">${text}</button>`;
+    },
+
+    optionClass: () => 'option',
 
     selectOption: (event) => {
       const activeClass = 'active';
@@ -39,14 +43,20 @@ const view = (() => {
     },
   };
 
-  function renderQuiz(questions) {
-    const rootNode = $('#quiz');
-    const questionHtml = questions
-      .map(question => questionCard.getHtml(question.getQuestion(), question.getOptions()))
-      .join('');
-    rootNode.append(questionHtml);
+  const quiz = {
+    render: (questions) => {
+      const rootNode = $('#quiz');
+      const questionCards = questions.map(getQuestionCardHtml).join('');
+      rootNode.append(questionCards);
+      initOptionClickEvents();
+    },
+  };
+  function getQuestionCardHtml(question) {
+    return questionCard.getHtml(question.getQuestion(), question.getOptions());
   }
-  const quiz = { render: renderQuiz };
+  function initOptionClickEvents() {
+    $(`.${questionCard.optionClass()}`).click(questionCard.selectOption);
+  }
 
   return { questionCard, quiz };
 })();

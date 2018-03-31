@@ -152,11 +152,11 @@ QUnit.module('view', () => {
       test('takes a string and returns a button string', (assert) => {
         const tests = [{
           input: 'Frodo Baggins',
-          expected: '<button type="button" class="list-group-item list-group-item-action">'
+          expected: '<button type="button" class="list-group-item list-group-item-action option">'
             + 'Frodo Baggins</button>',
         }, {
           input: 'Gandalf the Grey',
-          expected: '<button type="button" class="list-group-item list-group-item-action">'
+          expected: '<button type="button" class="list-group-item list-group-item-action option">'
             + 'Gandalf the Grey</button>',
         },
         ];
@@ -198,7 +198,7 @@ QUnit.module('view', () => {
             expected: '<div class="card mb-3">'
             + '<div class="card-header text-white"><h5></h5></div>'
             + '<div class="list-group list-group-flush">'
-            + '<button type="button" class="list-group-item list-group-item-action"></button>'
+            + '<button type="button" class="list-group-item list-group-item-action option"></button>'
             + '</div>'
             + '</div>',
           },
@@ -210,7 +210,7 @@ QUnit.module('view', () => {
             expected: '<div class="card mb-3">'
             + '<div class="card-header text-white"><h5>What is the name of the watchtower on Tol Sirion?</h5></div>'
             + '<div class="list-group list-group-flush">'
-            + '<button type="button" class="list-group-item list-group-item-action"></button>'
+            + '<button type="button" class="list-group-item list-group-item-action option"></button>'
             + '</div>'
             + '</div>',
           },
@@ -222,7 +222,7 @@ QUnit.module('view', () => {
             expected: '<div class="card mb-3">'
             + '<div class="card-header text-white"><h5>What is the name of the watchtower on Tol Sirion?</h5></div>'
             + '<div class="list-group list-group-flush">'
-            + '<button type="button" class="list-group-item list-group-item-action">Minas Tirith</button>'
+            + '<button type="button" class="list-group-item list-group-item-action option">Minas Tirith</button>'
             + '</div>'
             + '</div>',
           },
@@ -234,8 +234,8 @@ QUnit.module('view', () => {
             expected: '<div class="card mb-3">'
             + '<div class="card-header text-white"><h5>What is the name of the watchtower on Tol Sirion?</h5></div>'
             + '<div class="list-group list-group-flush">'
-            + '<button type="button" class="list-group-item list-group-item-action">Angband</button>'
-            + '<button type="button" class="list-group-item list-group-item-action">Minas Tirith</button>'
+            + '<button type="button" class="list-group-item list-group-item-action option">Angband</button>'
+            + '<button type="button" class="list-group-item list-group-item-action option">Minas Tirith</button>'
             + '</div>'
             + '</div>',
           },
@@ -297,7 +297,6 @@ QUnit.module('view', () => {
     hooks.beforeEach(beforeEach);
 
     const { quiz } = view;
-    Object.assign(hooks, { beforeEach });
 
     test('view.quiz exists', (assert) => {
       assert.ok(view.quiz, 'view.quiz is truthy');
@@ -326,15 +325,32 @@ QUnit.module('view', () => {
       stub.restore();
     });
 
-    test('renders html for each question passed in', (assert) => {
+    test('uses questionCard.getHtml to render html for each question passed in', (assert) => {
       const input = [makeQuestion(openTDBQuestions[0]), makeQuestion(openTDBQuestions[1])];
-      const expectedHtml = input.map(question => [question.getQuestion(), question.getOptions()])
-        .map(params => view.questionCard.getHtml(...params));
-
       quiz.render(input);
       const actualHtml = $('#quiz').html();
-      const hasExpectedHtml = expectedHtml.every(html => actualHtml.includes(html));
-      assert.ok(hasExpectedHtml, '#quiz has expected html');
+      const expectedHtml = getExpectedHtml(input);
+      assert.includes(actualHtml, expectedHtml, '#quiz has expected html');
+
+      function getExpectedHtml(questions) {
+        return questions
+          .map(question => [question.getQuestion(), question.getOptions()])
+          .map(([questionText, options]) => view.questionCard.getHtml(questionText, options));
+      }
+    });
+
+    test('click on an option calls questionCard.selectOption', (assert) => {
+      const selectOptionStub = sinon.stub(view.questionCard, 'selectOption');
+      setup(selectOptionStub);
+      $('#qunit-fixture button').first().click();
+      assert.ok(selectOptionStub.calledOnce, 'selectOption was called once');
+      selectOptionStub.restore();
+
+      function setup(stub) {
+        const input = [makeQuestion(openTDBQuestions[0])];
+        quiz.render(input);
+        assert.notOk(stub.called, 'selectOption should not have been called before test');
+      }
     });
   });
 });
