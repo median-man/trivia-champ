@@ -19,6 +19,7 @@ function makeQuestion(questionData) { //eslint-disable-line
 }
 
 const view = (() => {
+  const selectedOptionClass = 'active';
   const questionCard = {
     getHtml: (questionText, options) => {
       const header = questionCard.headerHtml(questionText);
@@ -37,26 +38,72 @@ const view = (() => {
     optionClass: () => 'option',
 
     selectOption: (event) => {
-      const activeClass = 'active';
       $(event.target)
-        .addClass(activeClass)
-        .siblings().removeClass(activeClass);
+        .addClass(selectedOptionClass)
+        .siblings().removeClass(selectedOptionClass);
     },
   };
 
+  let questionCardCollection;
   const quiz = {
+    getScore: () => questionCardCollection.scores(),
     render: (questions) => {
-      const rootNode = $('#quiz');
-      const questionCards = questions.map(getQuestionCardHtml).join('');
-      rootNode.append(questionCards);
-      initOptionClickEvents();
+      questionCardCollection = makeQuestionCardCollection(questions);
+      questionCardCollection.renderTo('#quiz');
     },
   };
-  function getQuestionCardHtml(question) {
-    return questionCard.getHtml(question.getQuestion(), question.getOptions());
-  }
-  function initOptionClickEvents() {
-    $(`.${questionCard.optionClass()}`).click(questionCard.selectOption);
+
+  function makeQuestionCardCollection(questions) {
+    const cards = questions.map(makeCard);
+    const elements = cards.map(card => card.element);
+
+    function makeCard(question) {
+      const html = questionCard.getHtml(question.getQuestion(), question.getOptions());
+      const element = $(html).get(0);
+
+      function getResult() {
+        const answer = getAnswer();
+        const isCorrect = question.isCorrect(answer);
+
+        if (isCorrect) {
+          return 'correct';
+        } else if (answer) {
+          return 'incorrect';
+        }
+        return 'unanswered';
+      }
+
+      function getAnswer() {
+        const answerText = $(`.${selectedOptionClass}`, element).text();
+        return answerText;
+      }
+
+      return {
+        element,
+        question,
+        result: getResult,
+      };
+    }
+
+    function getScores() {
+      const results = cards.map(card => card.result());
+      const unanswered = results.filter(result => result === 'unanswered').length;
+      const correct = results.filter(result => result === 'correct').length;
+      const incorrect = results.filter(result => result === 'incorrect').length;
+      return { correct, incorrect, unanswered };
+    }
+
+    function renderTo(selector) {
+      $(elements).appendTo(selector);
+      $(elements).on('click', `.${questionCard.optionClass()}`, questionCard.selectOption);
+    }
+
+    return {
+      get: () => cards,
+      elements: () => elements,
+      scores: getScores,
+      renderTo,
+    };
   }
 
   return { questionCard, quiz };
