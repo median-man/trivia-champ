@@ -14,6 +14,7 @@ function makeQuestion(questionData) { //eslint-disable-line
   return {
     getOptions: () => options,
     getQuestion: () => questionData.question,
+    isCorrect: answer => (answer === questionData.correct_answer),
   };
 }
 

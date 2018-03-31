@@ -76,7 +76,7 @@ QUnit.module('question model', (hooks) => {
 
   test('has expected methods', (assert) => {
     const question = makeQuestion(openTDBQuestions[0]);
-    const expectedMethods = ['getQuestion', 'getOptions'];
+    const expectedMethods = ['getQuestion', 'getOptions', 'isCorrect'];
     expectedMethods.forEach(hasMethod);
 
     function hasMethod(methodName) {
@@ -126,6 +126,21 @@ QUnit.module('question model', (hooks) => {
         assert.includes(options, expected, `returned array includes ${expectedString}`);
       });
     }
+  });
+
+  QUnit.module('isCorrect', () => {
+    const testData = openTDBQuestions[0];
+    const question = makeQuestion(testData);
+
+    test('accepts a string and returns true if it is the correct answer', (assert) => {
+      const correct = testData.correct_answer;
+      assert.strictEqual(question.isCorrect(correct), true, 'true when answer is incorrect');
+    });
+
+    test('accepts a string and returns false if it is not the correct answer', (assert) => {
+      const incorrect = testData.incorrect_answers[0];
+      assert.strictEqual(question.isCorrect(incorrect), false, 'false when answer is incorrect');
+    });
   });
 });
 
