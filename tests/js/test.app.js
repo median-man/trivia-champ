@@ -138,7 +138,7 @@ QUnit.module('view', () => {
       assert.ok(questionCard, 'is defined');
     });
 
-    const expectedMethods = ['optionHtml', 'headerHtml', 'getHtml'];
+    const expectedMethods = ['optionHtml', 'headerHtml', 'getHtml', 'selectOption'];
     expectedMethods.forEach(hasMethodTest);
 
     function hasMethodTest(methodName) {
@@ -245,6 +245,30 @@ QUnit.module('view', () => {
         function testGetHtml({ input, expected }) {
           const inputStr = JSON.stringify(input, null, 6);
           assert.equal(getHtml(input.questionText, input.options), expected, `input: ${inputStr}`);
+        }
+      });
+    });
+
+    QUnit.module('selectOption', () => {
+      const { selectOption } = questionCard;
+      const testFixture = $('#qunit-fixture');
+
+      test('accepts an option element and adds "active" class to it', (assert) => {
+        const testOption = $('<div>Gil-galad</div>').appendTo(testFixture);
+        selectOption(testOption[0]);
+        assert.ok(testOption.hasClass('active'), 'has "active" class');
+      });
+
+      test('accepts an option element and removes active class from other options for question', (assert) => {
+        const [firstOption, secondOption] = setupOptions();
+        selectOption(secondOption);
+        assert.notOk(firstOption.hasClass('active'), 'first option does not have "active" class');
+
+        function setupOptions() {
+          const first = $('<div class="active">Gil-galad</div>');
+          const second = $('<div>Isildur</div>');
+          testFixture.append(first, second);
+          return [first, second];
         }
       });
     });
