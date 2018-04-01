@@ -112,4 +112,7 @@ const view = (() => {
 $(() => {
   const questions = questionData.map(makeQuestion);
   view.quiz.render(questions);
+  $('#quiz-done').on('click', () => {
+    alert(JSON.stringify(view.quiz.getScore(), null, 2));
+  });
 });
