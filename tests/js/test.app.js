@@ -1,4 +1,5 @@
 /* global questionData, makeQuestion, view */
+const { todo, only } = QUnit;
 const openTDBQuestions = () => [
   {
     category: 'Art',
@@ -153,10 +154,15 @@ QUnit.module('view', () => {
       assert.ok(questionCard, 'is defined');
     });
 
-    const expectedMethods = ['optionHtml', 'headerHtml', 'getHtml', 'selectOption'];
-    expectedMethods.forEach(hasMethodTest);
-
-    function hasMethodTest(methodName) {
+    const expectedMethods = [
+      'optionHtml',
+      'headerHtml',
+      'getHtml',
+      'getSelectedOption',
+      'optionClass',
+    ];
+    expectedMethods.forEach(testForMethod);
+    function testForMethod(methodName) {
       test(`questionCard has ${methodName} method`, (assert) => {
         assert.isFunction(questionCard[methodName]);
       });
@@ -300,6 +306,54 @@ QUnit.module('view', () => {
         firstOpt.addClass(activeClass);
         secondOpt.click();
         assert.notOk(firstOpt.hasClass('active'), 'option has "active" class after click event');
+      });
+    });
+
+    QUnit.module('getSelectedOption', () => {
+      const { getSelectedOption } = questionCard;
+
+      function setupQuestionElement(options) {
+        const html = `
+          <div>
+            <div>Who is known as the White Wizard?</div>
+            <div>${options.join('')}</div>
+          </div>`;
+        const element = $(html).appendTo('#qunit-fixture')[0];
+        return element;
+      }
+
+      test('when no option is selected for the question', (assert) => {
+        const options = [
+          '<div>Isuldur</div>',
+          '<div>Saruman</div>',
+          '<div>Gandalf</div>',
+          '<div>Turin</div>',
+        ];
+        const questionElement = setupQuestionElement(options);
+        const expected = '';
+        const result = getSelectedOption(questionElement);
+        assert.equal(result, expected, 'returns ""');
+      });
+
+      test('when an option is selected for the test', (assert) => {
+        const options = [
+          '<div>Isuldur</div>',
+          '<div class="active">Saruman</div>',
+          '<div>Gandalf</div>',
+          '<div>Turin</div>',
+        ];
+        const questionElement = setupQuestionElement(options);
+        const expected = 'Saruman';
+        const result = getSelectedOption(questionElement);
+        assert.equal(result, expected, 'returns "Saruman"');
+      });
+    });
+
+    QUnit.module('optionClass', () => {
+      test('returns class name included in the class list of every option element', (assert) => {
+        const expected = 'option';
+        const result = questionCard.optionClass();
+        assert.equal(expected, result, `returns "${expected}"`);
       });
     });
   });
