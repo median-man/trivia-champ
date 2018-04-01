@@ -20,38 +20,51 @@ function makeQuestion(questionData) { //eslint-disable-line
 
 const view = (() => {
   const selectedOptionClass = 'active';
-  const questionCard = {
-    getHtml: (questionText, options) => {
-      const header = questionCard.headerHtml(questionText);
-      const optionsHtml = options.map(questionCard.optionHtml).join('');
+
+  const questionCard = (() => {
+    const optionClass = 'option';
+
+    function getHtml(questionText, options) {
+      const header = headerHtml(questionText);
+      const optionsHtml = options.map(optionHtml).join('');
       const listGroup = `<div class="list-group list-group-flush">${optionsHtml}</div>`;
       return `<div class="card mb-3">${header + listGroup}</div>`;
-    },
+    }
 
-    headerHtml: text => `<div class="card-header text-white"><h5>${text}</h5></div>`,
+    function headerHtml(text) {
+      return `<div class="card-header text-white"><h5>${text}</h5></div>`;
+    }
 
-    optionHtml: (text) => {
-      const classes = `list-group-item list-group-item-action ${questionCard.optionClass()}`;
+    function optionHtml(text) {
+      const classes = `list-group-item list-group-item-action ${optionClass}`;
       return `<button type="button" class="${classes}">${text}</button>`;
-    },
+    }
 
-    optionClass: () => 'option',
-
-    selectOption: (event) => {
+    function selectOption(event) {
       $(event.target)
         .addClass(selectedOptionClass)
         .siblings().removeClass(selectedOptionClass);
-    },
-  };
+    }
 
-  let questionCardCollection;
-  const quiz = {
-    getScore: () => questionCardCollection.scores(),
-    render: (questions) => {
-      questionCardCollection = makeQuestionCardCollection(questions);
-      questionCardCollection.renderTo('#quiz');
-    },
-  };
+    return {
+      getHtml,
+      headerHtml,
+      optionHtml,
+      selectOption,
+      optionClass: () => optionClass,
+    };
+  })();
+
+  const quiz = (() => {
+    let questionCardCollection;
+    return {
+      getScore: () => questionCardCollection.scores(),
+      render: (questions) => {
+        questionCardCollection = makeQuestionCardCollection(questions);
+        questionCardCollection.renderTo('#quiz');
+      },
+    };
+  })();
 
   function makeQuestionCardCollection(questions) {
     const cards = questions.map(makeCard);
