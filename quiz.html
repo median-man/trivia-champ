@@ -10,6 +10,50 @@
 </head>
 
 <body>
+  <div id="results-modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg text-center" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title w-100">Quiz Results</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-4">
+              <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Correct
+                    <span id="num-correct">7</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Incorrect
+                    <span id="num-incorrect">2</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Unanswered
+                    <span id="num-unanswerd">1</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="play-again" type="button" class="btn btn-primary btn-lg btn-block">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="container mt-5 mb-4">
     <div class="row justify-content-center">
@@ -33,11 +77,9 @@
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
     crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
   <!-- <script src="assets/js/openTriviaDB.js"></script> -->
   <script src="assets/js/questionData.js"></script>
