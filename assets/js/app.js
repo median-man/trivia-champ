@@ -117,10 +117,13 @@ const view = (() => {
 
   const scoreDialog = (() => {
     function setScore(score) {
-      throwOnInvalidScore(score);
+      throwOnMissingValue(score);
+      $('#score-correct').text(score.correct);
+      $('#score-incorrect').text(score.incorrect);
+      $('#score-unanswered').text(score.unanswered);
     }
 
-    function throwOnInvalidScore(score) {
+    function throwOnMissingValue(score) {
       const requiredKeys = ['correct', 'incorrect', 'unanswered'];
       const missingKeys = requiredKeys.filter(key => !(key in score));
       const isScoreMissingKey = missingKeys.length > 0;

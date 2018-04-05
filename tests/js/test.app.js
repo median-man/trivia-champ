@@ -519,12 +519,43 @@ QUnit.module('view', () => {
         }
       });
 
-      // test('it updates text of #score-correct element', (assert) => {
-      //   assert.expect(1);
-      //   const testEl = $('<span>', { id: 'score-correct' });
-      //   $('#qunit-fixture').append(testEl);
-      //   setScore({})
-      // });
+      test('it sets the text of the score elements when score is { correct: 0, incorrect: 0, '
+        + 'unanswered: 0 }', (assert) => {
+        setUpFixture();
+
+        setScore({ correct: 0, incorrect: 0, unanswered: 0 });
+
+        const elementText = getElementText();
+        assert.equal(elementText.correct, '0', 'set #score-correct');
+        assert.equal(elementText.incorrect, '0', 'set #score-incorrect');
+        assert.equal(elementText.unanswered, '0', 'set #score-unanswered');
+      });
+
+      test('it sets the text of the score elements when score is { correct: 1, incorrect: 4, '
+        + 'unanswered: 2 }', (assert) => {
+        setUpFixture();
+
+        setScore({ correct: 1, incorrect: 4, unanswered: 2 });
+
+        const elementText = getElementText();
+        assert.equal(elementText.correct, '1', 'set #score-correct');
+        assert.equal(elementText.incorrect, '4', 'set #score-incorrect');
+        assert.equal(elementText.unanswered, '2', 'set #score-unanswered');
+      });
+
+      function setUpFixture() {
+        const scoreIds = ['score-correct', 'score-incorrect', 'score-unanswered'];
+        const scoreElements = scoreIds.map(id => `<span id="${id}"></span>`);
+        $('#qunit-fixture').append(scoreElements);
+      }
+
+      function getElementText() {
+        return {
+          correct: $('#score-correct').text(),
+          incorrect: $('#score-incorrect').text(),
+          unanswered: $('#score-unanswered').text(),
+        };
+      }
     });
   });
 });
