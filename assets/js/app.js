@@ -115,7 +115,21 @@ const view = (() => {
     }
   }
 
-  return { questionCard: questionCardView, quiz };
+  const scoreDialog = (() => {
+    function setScore(score) {
+      throwOnInvalidScore(score);
+    }
+
+    function throwOnInvalidScore(score) {
+      const requiredKeys = ['correct', 'incorrect', 'unanswered'];
+      const missingKeys = requiredKeys.filter(key => !(key in score));
+      const isScoreMissingKey = missingKeys.length > 0;
+      if (isScoreMissingKey) throw new Error('invalid score');
+    }
+    return { setScore };
+  })();
+
+  return { questionCard: questionCardView, quiz, scoreDialog };
 })();
 
 $(() => {

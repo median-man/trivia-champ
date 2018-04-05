@@ -481,4 +481,50 @@ QUnit.module('view', () => {
       });
     });
   });
+
+  QUnit.module('scoreDialog', () => {
+    test('scoreDialog exists', (assert) => {
+      assert.ok(view.scoreDialog, 'it exists');
+    });
+
+    QUnit.module('setScore', () => {
+      const { setScore } = view.scoreDialog;
+
+      test('setScore is a function', assert => assert.isFunction(setScore));
+
+      test('it does not throw when score has expected keys', (assert) => {
+        assert.expect(1);
+        const validScore = { correct: 0, incorrect: 0, unanswered: 0 };
+        let isNoErrorThrown = true;
+        try {
+          setScore(validScore);
+        } catch (err) {
+          isNoErrorThrown = false;
+        }
+        assert.ok(isNoErrorThrown, 'did not throw');
+      });
+
+      test('it throws when score is missing an expected key', (assert) => {
+        assert.expect(3);
+        assertThrowsIfMissingKey('correct');
+        assertThrowsIfMissingKey('incorrect');
+        assertThrowsIfMissingKey('unanswered');
+
+        function assertThrowsIfMissingKey(missingKey) {
+          const score = { correct: 0, incorrect: 0, unanswered: 0 };
+          delete score[missingKey];
+          const expectedError = Error('invalid score');
+          const msg = `missing '${missingKey}' key`;
+          assert.throws(() => setScore(score), expectedError, msg);
+        }
+      });
+
+      // test('it updates text of #score-correct element', (assert) => {
+      //   assert.expect(1);
+      //   const testEl = $('<span>', { id: 'score-correct' });
+      //   $('#qunit-fixture').append(testEl);
+      //   setScore({})
+      // });
+    });
+  });
 });
