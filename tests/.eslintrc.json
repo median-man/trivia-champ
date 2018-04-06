@@ -4,6 +4,9 @@
     "qunit": true
   },
   "globals": {
-    "sinon": false
+    "sinon": false,
+    "todo": false,
+    "only": false,
+    "test": false
   }
 }
