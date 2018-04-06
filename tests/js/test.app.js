@@ -567,5 +567,31 @@ QUnit.module('view', () => {
         }
       });
     });
+
+    QUnit.module('show', () => {
+      const { show } = view.scoreDialog;
+
+      test('show is a function', assert => assert.isFunction(show));
+
+      test('calls $("#score-modal").modal()', (assert) => {
+        const { modal: modalStub, restoreJq: restore } = makeStubs();
+        show();
+        const isModalShown = modalStub.modal.calledWith({ show: true });
+        assert.ok(isModalShown, 'shows Bootstrap 4 modal dialog');
+        restore();
+
+        function makeStubs() {
+          const jqStub = sinon.stub(window, '$');
+
+          const modal = sinon.stub();
+          modal.modal = sinon.stub();
+
+          jqStub.withArgs('#score-modal').returns(modal);
+
+          const restoreJq = () => jqStub.restore();
+          return { modal, restoreJq };
+        }
+      });
+    });
   });
 });

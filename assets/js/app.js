@@ -133,7 +133,11 @@ const view = (() => {
       if (isScoreMissingKey) throw new Error('invalid score');
     }
 
-    Object.assign(result, { setScore });
+    function show() {
+      $('#score-modal').modal({ show: true });
+    }
+
+    Object.assign(result, { setScore, show });
 
     return result;
   })();
@@ -145,6 +149,8 @@ $(() => {
   const questions = questionData.map(makeQuestion);
   view.quiz.render(questions);
   $('#quiz-done').on('click', () => {
-    alert(JSON.stringify(view.quiz.getScore(), null, 2));
+    view.scoreDialog
+      .setScore(view.quiz.getScore())
+      .show();
   });
 });
