@@ -1,23 +1,3 @@
-function makeQuestion(questionData) {
-  const options = shuffleArray([questionData.correct_answer, ...questionData.incorrect_answers]);
-
-  function shuffleArray(arrToShuffle) {
-    const srcCopy = arrToShuffle.slice(0);
-    const result = [];
-    while (srcCopy.length > 1) {
-      const randomIndex = Math.floor(Math.random() * srcCopy.length);
-      const [randomVal] = srcCopy.splice(randomIndex, 1);
-      result.push(randomVal);
-    }
-    return result.concat(srcCopy);
-  }
-  return {
-    getOptions: () => options,
-    getQuestion: () => questionData.question,
-    isCorrect: answer => (answer === questionData.correct_answer),
-  };
-}
-
 const view = (() => {
   const quiz = (() => {
     let questionCardCollection;
@@ -144,13 +124,3 @@ const view = (() => {
 
   return { questionCard: questionCardView, quiz, scoreDialog };
 })();
-
-$(() => {
-  const questions = questionData.map(makeQuestion);
-  view.quiz.render(questions);
-  $('#quiz-done').on('click', () => {
-    view.scoreDialog
-      .setScore(view.quiz.getScore())
-      .show();
-  });
-});

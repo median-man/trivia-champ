@@ -83,7 +83,20 @@
     crossorigin="anonymous"></script>
   <!-- <script src="assets/js/openTriviaDB.js"></script> -->
   <script src="assets/js/questionData.js"></script>
+  <script src="assets/js/question.js"></script>
   <script src="assets/js/app.js"></script>
+
+  <script>
+    $(() => {
+      const questions = questionData.map(makeQuestion);
+      view.quiz.render(questions);
+      $('#quiz-done').on('click', () => {
+        view.scoreDialog
+          .setScore(view.quiz.getScore())
+          .show();
+      });
+    });
+  </script>
 </body>
 
 </html>
