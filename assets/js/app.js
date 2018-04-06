@@ -116,11 +116,14 @@ const view = (() => {
   }
 
   const scoreDialog = (() => {
+    const result = {};
+
     function setScore(score) {
       throwOnMissingValue(score);
       $('#score-correct').text(score.correct);
       $('#score-incorrect').text(score.incorrect);
       $('#score-unanswered').text(score.unanswered);
+      return result;
     }
 
     function throwOnMissingValue(score) {
@@ -129,7 +132,10 @@ const view = (() => {
       const isScoreMissingKey = missingKeys.length > 0;
       if (isScoreMissingKey) throw new Error('invalid score');
     }
-    return { setScore };
+
+    Object.assign(result, { setScore });
+
+    return result;
   })();
 
   return { questionCard: questionCardView, quiz, scoreDialog };
