@@ -1,10 +1,11 @@
-const view = (() => {
+const view = (() => { // eslint-disable-line
   const quiz = (() => {
     let questionCardCollection;
     return {
       getScore: () => questionCardCollection.scores(),
       render: (questions) => {
         questionCardCollection = makeQuestionCardCollection(questions);
+        $('#quiz').empty();
         questionCardCollection.renderTo('#quiz');
       },
     };

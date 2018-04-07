@@ -248,9 +248,8 @@ QUnit.module('view', () => {
 
     QUnit.module('render', (hooks) => {
       hooks.beforeEach(beforeEach);
-      function beforeEach(assert) {
+      function beforeEach() {
         $('#qunit-fixture').append('<div id="quiz"></div>');
-        assert.equal($('div#quiz').length, 1, 'div#quiz element in DOM');
       }
       test('has render method', assert => assert.isFunction(quiz.render));
 
@@ -289,7 +288,7 @@ QUnit.module('view', () => {
         }
       });
 
-      test('click on an option calls questionCard.selectOption', (assert) => {
+      test('clicking on an option calls questionCard.selectOption', (assert) => {
         const selectOptionStub = sinon.stub(view.questionCard, 'selectOption');
         setup(selectOptionStub);
         $('#qunit-fixture button').first().click();
@@ -301,6 +300,18 @@ QUnit.module('view', () => {
           quiz.render(input);
           assert.notOk(stub.called, 'selectOption should not have been called before test');
         }
+      });
+
+      test('clears inner html of quiz before rendering questions', (assert) => {
+        assert.expect(1);
+        const innerEl = $('<div id="beforeRender"></div>')[0];
+        const quizEl = $('#quiz').append(innerEl)[0];
+
+        const input = [makeQuestion(openTDBQuestions()[0])];
+        quiz.render(input);
+
+        const quizHasPreviousInnerEl = $.contains(quizEl, innerEl);
+        assert.notOk(quizHasPreviousInnerEl, '#beforeRender removed from quiz.');
       });
     });
 

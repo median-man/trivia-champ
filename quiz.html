@@ -41,7 +41,7 @@
               <div class="card text-white bg-warning mb-3">
                 <div class="card-body">
                   <p class="card-text h5">Unanswered
-                    <span id="score-unanswerd"></span>
+                    <span id="score-unanswered"></span>
                   </p>
                 </div>
               </div>
@@ -89,16 +89,18 @@
   <script>
     $(() => {
       startQuiz();
-      $('#quiz-done').on('click', () => {
-        view.scoreDialog
-          .setScore(view.quiz.getScore())
-          .onHide(startQuiz)
-          .show();
-      });
+      $('#quiz-done').on('click', showScore);
 
       function startQuiz() {
         const questions = questionData.map(makeQuestion);
         view.quiz.render(questions);
+      }
+
+      function showScore() {
+        view.scoreDialog
+          .setScore(view.quiz.getScore())
+          .onHide(() => location.reload())
+          .show();
       }
     });
 
