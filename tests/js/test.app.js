@@ -473,6 +473,34 @@ QUnit.module('view', () => {
           return { modal, restoreJq };
         }
       });
+
+      test('is chainable', (assert) => {
+        assert.expect(1);
+        assert.strictEqual(view.scoreDialog.show(), view.scoreDialog, 'returns scoreDialog');
+      });
+    });
+
+    QUnit.module('onHide', () => {
+      const { onHide } = view.scoreDialog;
+      test('it is a function', assert => assert.isFunction(onHide));
+
+      test('sets callback function for bootsrap modal hidden event', (assert) => {
+        assert.expect(1);
+        const callback = sinon.stub();
+        $('#qunit-fixture').append('<div id="score-modal">');
+        $('#score-modal').modal({ show: true });
+
+        onHide(callback);
+        $('#score-modal').modal('hide');
+
+        assert.ok(callback.calledOnce, 'callback was called once');
+      });
+
+      test('method is chainable', (assert) => {
+        assert.expect(1);
+        const stub = () => null;
+        assert.strictEqual(view.scoreDialog.onHide(stub), view.scoreDialog, 'returns scoreDialog');
+      });
     });
   });
 });

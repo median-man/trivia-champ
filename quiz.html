@@ -88,13 +88,18 @@
 
   <script>
     $(() => {
-      const questions = questionData.map(makeQuestion);
-      view.quiz.render(questions);
+      startQuiz();
       $('#quiz-done').on('click', () => {
         view.scoreDialog
           .setScore(view.quiz.getScore())
+          .onHide(startQuiz)
           .show();
       });
+
+      function startQuiz() {
+        const questions = questionData.map(makeQuestion);
+        view.quiz.render(questions);
+      }
     });
   </script>
 </body>

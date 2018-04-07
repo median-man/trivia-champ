@@ -115,9 +115,15 @@ const view = (() => {
 
     function show() {
       $('#score-modal').modal({ show: true });
+      return result;
     }
 
-    Object.assign(result, { setScore, show });
+    function onHide(callback) {
+      $('#score-modal').on('hidden.bs.modal', callback);
+      return result;
+    }
+
+    Object.assign(result, { setScore, show, onHide });
 
     return result;
   })();
