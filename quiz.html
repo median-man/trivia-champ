@@ -10,11 +10,56 @@
 </head>
 
 <body>
+  <div id="score-modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg text-center" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title w-100">Quiz Results</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-4">
+              <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Correct
+                    <span id="score-correct"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Incorrect
+                    <span id="score-incorrect"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                  <p class="card-text h5">Unanswered
+                    <span id="score-unanswered"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="play-again" type="button" class="btn btn-primary btn-lg btn-block" data-dismiss="modal">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div class="container mt-5">
+  <div class="container mt-5 mb-4">
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <div id="quiz"></div>
+        <button id="quiz-done" type="button" class="btn btn-secondary btn-lg btn-block">Done</button>
       </div>
     </div>
   </div>
@@ -43,9 +88,22 @@
 
   <script>
     $(() => {
-      const questions = questionData.map(makeQuestion);
-      view.quiz.render(questions);
+      startQuiz();
+      $('#quiz-done').on('click', showScore);
+
+      function startQuiz() {
+        const questions = questionData.map(makeQuestion);
+        view.quiz.render(questions);
+      }
+
+      function showScore() {
+        view.scoreDialog
+          .setScore(view.quiz.getScore())
+          .onHide(() => location.reload())
+          .show();
+      }
     });
+
   </script>
 </body>
 
