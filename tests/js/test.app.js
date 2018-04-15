@@ -515,14 +515,27 @@ QUnit.module('view', () => {
     });
   });
 
-  QUnit.module('timer', () => {
+  QUnit.module('timer', (timerHooks) => {
     const { timer } = view;
+
+    timerHooks.beforeEach(() => {
+      $('#qunit-fixture').append('<span class="timer-container">');
+    });
     test('view.timer exists', assert => assert.ok(timer));
 
-    // test('selector is "#timer"', (assert) => {
-    //   assert.expect(1);
-    //   assert.equal(timer.selector, '#timer');
-    // });
+    QUnit.module('container', () => {
+      test('returns a jQuery collection', (assert) => {
+        assert.expect(2);
+        assert.ok(timer.container, 'timer.container exists');
+        assert.ok(timer.container() instanceof $, 'is instance of $');
+      });
+
+      test('element has timer-container class', (assert) => {
+        assert.expect(1);
+        const hasExpectedClass = timer.container().hasClass('timer-container');
+        assert.ok(hasExpectedClass, '$.hasClass("timer-container")');
+      });
+    });
 
     QUnit.module('render', () => {
       test('method exists', assert => assert.ok(timer.render));
@@ -541,6 +554,68 @@ QUnit.module('view', () => {
         $('#qunit-fixture').append('<span id="timer">');
         timer.render(50);
         assert.equal($('#timer').text(), '50', "$('#timer').text()");
+      });
+
+      test('passes seconds argument to renderClassNames', (assert) => {
+        assert.expect(2);
+        const seconds = 5;
+        const spy = sinon.spy(timer, 'renderClassNames');
+        timer.render(seconds);
+        assert.ok(spy.calledOnce, 'renderClassNames called once');
+        assert.ok(spy.firstCall.calledWith(seconds), `called with ${seconds}`);
+        spy.restore();
+      });
+    });
+
+    QUnit.module('renderClassNames', () => {
+      test('it exists', assert => assert.isFunction(timer.renderClassNames));
+
+      QUnit.module('when seconds argument is 5 or less', () => {
+        test('"alert-danger" class gets added to .timer-container element', (assert) => {
+          assertAddsClass('alert-danger', () => timer.renderClassNames(5), assert);
+        });
+
+        test('removes classes from .timer-container element', (assert) => {
+          assertRemovesClasses(['alert-info', 'alert-warning'], () => timer.renderClassNames(5), assert);
+        });
+      });
+
+      function assertAddsClass(className, cb, assert) {
+        assert.expect(1);
+        $('.timer-container').removeClass(className);
+        cb();
+        const hasExpectedClass = $('.timer-container').hasClass(className);
+        assert.ok(hasExpectedClass, `.timer-container has "${className}" class`);
+      }
+
+      function assertRemovesClasses(classNames, cb, assert) {
+        assert.expect(1);
+        const timerContainer = $('.timer-container');
+        timerContainer.addClass(classNames.join(' '));
+        cb();
+        const doesNotHaveClasses = classNames.every(name => !timerContainer.hasClass(name));
+        const msg = `.timer-container does not have "${classNames.join(', ')}" class`;
+        assert.ok(doesNotHaveClasses, msg);
+      }
+
+      QUnit.module('when seconds argument is greater than 10', () => {
+        test('"alert-info" class gets added to .timer-container element', (assert) => {
+          assertAddsClass('alert-info', () => timer.renderClassNames(11), assert);
+        });
+
+        test('removes classes from .timer-container element', (assert) => {
+          assertRemovesClasses(['alert-danger', 'alert-warning'], () => timer.renderClassNames(11), assert);
+        });
+      });
+
+      QUnit.module('when seconds argument is > 5 and <= 10', () => {
+        test('"alert-warning" class gets added to .timer-container element', (assert) => {
+          assertAddsClass('alert-warning', () => timer.renderClassNames(10), assert);
+        });
+
+        test('removes classes from .timer-container element', (assert) => {
+          assertRemovesClasses(['alert-danger', 'alert-info'], () => timer.renderClassNames(10), assert);
+        });
       });
     });
   });
