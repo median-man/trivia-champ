@@ -7,9 +7,13 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Trivia Champ</title>
   <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
+  <div class="timer-container alert alert-info position-fixed mt-3 ">
+      <strong id="timer">---</strong>
+  </div>
   <div id="score-modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
     aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg text-center" role="document">
@@ -84,19 +88,27 @@
   <!-- <script src="assets/js/openTriviaDB.js"></script> -->
   <script src="assets/js/questionData.js"></script>
   <script src="assets/js/question.js"></script>
+  <script src="assets/js/QuizTimer.js"></script>
   <script src="assets/js/app.js"></script>
 
   <script>
     $(() => {
+      const quizTimer = new QuizTimer();
+      quizTimer.onTimeUp = showScore;
+      quizTimer.onChange = view.timer.render;
+      
       startQuiz();
       $('#quiz-done').on('click', showScore);
 
       function startQuiz() {
         const questions = questionData.map(makeQuestion);
         view.quiz.render(questions);
+        quizTimer.start();
+        view.timer.render(quizTimer.secondsRemaining);
       }
 
       function showScore() {
+        quizTimer.stop();
         view.scoreDialog
           .setScore(view.quiz.getScore())
           .onHide(() => location.reload())

@@ -10,6 +10,7 @@
   },
   "globals": {
     "makeQuestion": true,
-    "questionData": true
+    "questionData": true,
+    "QuizTimer": true
   }
 }
