@@ -28,6 +28,18 @@ QUnit.module('QuizTimer', (hooks) => {
     });
   });
 
+  QUnit.module('stop', () => {
+    test('calls clearInterval with intervalId', (assert) => {
+      assert.expect(2);
+      const spy = sinon.spy(window, 'clearInterval');
+      quizTimer.intervalId = 1;
+      quizTimer.stop();
+      assert.ok(spy.calledOnce, 'called clearInterval');
+      assert.ok(spy.firstCall.calledWith(quizTimer.intervalId), 'called with intervalId');
+      spy.restore();
+    });
+  });
+
   QUnit.module('tick', () => {
     test('decrements secondsRemaining', (assert) => {
       assert.expect(1);
@@ -74,13 +86,11 @@ QUnit.module('QuizTimer', (hooks) => {
         assert.ok(true, 'quizTimer.tick() did not throw');
       });
 
-      test('calls clearInterval with intervalId', (assert) => {
-        assert.expect(2);
-        const spy = sinon.spy(window, 'clearInterval');
-        quizTimer.intervalId = 1;
+      test('calls stop', (assert) => {
+        assert.expect(1);
+        const spy = sinon.spy(quizTimer, 'stop');
         quizTimer.tick();
-        assert.ok(spy.calledOnce, 'called clearInterval');
-        assert.ok(spy.firstCall.calledWith(quizTimer.intervalId), 'called with intervalId');
+        assert.ok(spy.calledOnce, 'quizTimer.stop called once');
         spy.restore();
       });
     });

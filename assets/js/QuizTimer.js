@@ -5,15 +5,19 @@ class QuizTimer { // eslint-disable-line
     this.onTimeUp = null;
   }
 
-  tick() {
-    this.secondsRemaining -= 1;
-    if (this.onChange) this.onChange(this.secondsRemaining);
-    const isTimeOut = this.secondsRemaining <= 0;
-    if (isTimeOut) window.clearInterval(this.intervalId);
-    if (isTimeOut && this.onTimeUp) this.onTimeUp();
+  stop() {
+    window.clearInterval(this.intervalId);
   }
 
   start() {
     this.intervalId = window.setInterval(() => this.tick(), 1000);
+  }
+
+  tick() {
+    this.secondsRemaining -= 1;
+    if (this.onChange) this.onChange(this.secondsRemaining);
+    const isTimeOut = this.secondsRemaining <= 0;
+    if (isTimeOut) this.stop();
+    if (isTimeOut && this.onTimeUp) this.onTimeUp();
   }
 }
