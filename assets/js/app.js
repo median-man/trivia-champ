@@ -129,5 +129,13 @@ const view = (() => { // eslint-disable-line
     return result;
   })();
 
-  return { questionCard: questionCardView, quiz, scoreDialog };
+  const timer = {
+    render: (seconds) => {
+      $('#timer').text(seconds);
+    },
+  };
+
+  return {
+    questionCard: questionCardView, quiz, scoreDialog, timer,
+  };
 })();

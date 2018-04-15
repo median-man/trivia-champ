@@ -514,4 +514,34 @@ QUnit.module('view', () => {
       });
     });
   });
+
+  QUnit.module('timer', () => {
+    const { timer } = view;
+    test('view.timer exists', assert => assert.ok(timer));
+
+    // test('selector is "#timer"', (assert) => {
+    //   assert.expect(1);
+    //   assert.equal(timer.selector, '#timer');
+    // });
+
+    QUnit.module('render', () => {
+      test('method exists', assert => assert.ok(timer.render));
+
+      test('sets the text for #timer element to "100"', (assert) => {
+        assert.expect(1);
+        timer.selector = '#timer';
+        $('#qunit-fixture').append('<span id="timer">');
+        timer.render(100);
+        assert.equal($('#timer').text(), '100', "$('#timer').text()");
+      });
+
+      test('sets the text for #timer element to "50"', (assert) => {
+        assert.expect(1);
+        timer.selector = '#timer';
+        $('#qunit-fixture').append('<span id="timer">');
+        timer.render(50);
+        assert.equal($('#timer').text(), '50', "$('#timer').text()");
+      });
+    });
+  });
 });
