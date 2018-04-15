@@ -130,8 +130,21 @@ const view = (() => { // eslint-disable-line
   })();
 
   const timer = {
+    container: () => $('.timer-container'),
     render: (seconds) => {
+      const alertInfo = 'alert-info';
+      const alertDanger = 'alert-danger';
+
       $('#timer').text(seconds);
+
+      const container = timer.container();
+      if (seconds < 6) {
+        container.removeClass(alertInfo);
+        container.addClass(alertDanger);
+      } else {
+        container.removeClass(alertDanger);
+        container.addClass(alertInfo);
+      }
     },
   };
 
