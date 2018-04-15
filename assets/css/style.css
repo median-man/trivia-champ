@@ -1,9 +1,6 @@
-#timer {
+.timer-container {
   z-index: 3;
   top: 0em;
   right: -.25em;
+  width: 80px;
 }
-
-/* #quiz {
-  max-width: 550px;
-} */
