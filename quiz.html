@@ -93,12 +93,20 @@
 
   <script>
     $(() => {
+      preventScrollRestoration();
+      
       const quizTimer = new QuizTimer();
       quizTimer.onTimeUp = showScore;
       quizTimer.onChange = view.timer.render;
       
       startQuiz();
       $('#quiz-done').on('click', showScore);
+
+      function preventScrollRestoration() {
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+      }
 
       function startQuiz() {
         const questions = questionData.map(makeQuestion);
